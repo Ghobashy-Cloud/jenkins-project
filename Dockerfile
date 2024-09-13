@@ -1,20 +1,5 @@
-# Stage 1: Build
-FROM golang:1.21-alpine AS builder
+FROM postgres:15
 
-WORKDIR /app
+ENV POSTGRES_PASSWORD your_password
 
-COPY go.mod go.sum ./
-RUN go mod download
-
-COPY . .
-
-RUN go build -o main
-
-# Stage 2: Final Image
-FROM alpine:3.17
-
-WORKDIR /app
-
-COPY --from=builder /app/main .
-
-CMD ["./main"]
+COPY ./init_db.sql /docker-entrypoint-initdb.d/
